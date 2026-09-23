@@ -5,5 +5,17 @@
     "blocks": "compositions",
     "components": "compositions/components",
     "assets": "assets"
-  }
+  },
+  "registryItems": [
+    {
+      "name": "caption-particle-burst",
+      "type": "hyperframes:component",
+      "target": "compositions/components/caption-particle-burst.html"
+    },
+    {
+      "name": "caption-editorial-emphasis",
+      "type": "hyperframes:component",
+      "target": "compositions/components/caption-editorial-emphasis.html"
+    }
+  ]
 }

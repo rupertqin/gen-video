@@ -1,0 +1,11 @@
+.thumbnails
+.hyperframes
+.waveform-cache
+snapshots
+renders
+.DS_Store
+.env
+assets/
+
+compositions/captions.html
+keywords.prompt.md

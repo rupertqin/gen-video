@@ -1,0 +1,91 @@
+{
+  "_readme": [
+    "字幕样式与内容配置。改完运行：npm run build-audio",
+    "构建结尾会打印排版估算、逐词覆盖率与死条目告警；_ 开头的键只是说明，程序会忽略。",
+    "scale — 整体等比系数，1.0 = 原始尺寸，手机观看建议 1.2~1.4；font / stage 里的 px 都是 1.0 倍下的基准值。",
+    "font.wordGapPx — 字间距。字幕按『字』渲染（每字一个渲染与时间单位），中文不宜有间距，默认 0。",
+    "font.emphasisPadEm — 强调字左右留白（em，随字号缩放），避免大字紧贴旁边的普通字。",
+    "stage.availableHeight — 字幕可用的竖向空间；字号放大后若报『顶出安全区』，先加大它再考虑调小 scale。",
+    "maxKeywordsPerClause — 每个分句最多几个强调词，超出的按『长词优先』舍弃。",
+    "excludeWords — 人工覆盖词表（默认空）：只用于词典没收录、但确实不该点亮的复合词。常规情况由 jieba 词典自动判定。",
+    "keywords — 人工提供的强调词表，命中的词会渲染成超大强调词。",
+    "关键词命中必须落在 jieba 词典的词边界上：『义』落在『意义』里不会点亮。",
+    "要强调整个术语就用整个术语作关键词（如『仁义礼智信』），单字关键词只在它独立成字时才亮。"
+  ],
+  "scale": 1.3,
+  "font": {
+    "normalPx": 40,
+    "emphasisPx": 82,
+    "lineGapPx": 2,
+    "wordGapPx": 0,
+    "lineHeight": 1.14,
+    "emphasisPadEm": 0.06
+  },
+  "color": {
+    "text": "#2A2620",
+    "emphasis": "#3F6E5C",
+    "textShadow": "0 1px 0 rgba(255,255,255,0.7)",
+    "scrim": "linear-gradient(180deg, rgba(246,243,236,0) 0%, rgba(246,243,236,0.55) 42%, rgba(246,243,236,0.96) 100%)"
+  },
+  "stage": {
+    "availableHeight": 600,
+    "sidePadding": 72,
+    "bottomMargin": 118,
+    "scrimHeight": 500
+  },
+  "entrance": {
+    "duration": 0.12,
+    "fromScale": 1.12
+  },
+  "maxKeywordsPerClause": 2,
+  "_autoKeywords": "用 jieba 从本文自动补主题词：pos 是保留的词性（用来滤掉连词/副词/代词/助词），minFreq 与 maxFreq 卡频次，topN 取排名前几个；TextRank 负责『与主题相关』。",
+  "_autoKeywordsNote": "这是本地兜底方案，默认关闭。实测它偏爱泛用抽象名词（价值/现实/个人/能力），而值得强调的恰是低频专有术语，方向相反。关键词的正式来源是 keywords.prompt.md（拿去对话式大模型里挑），见该文件。",
+  "autoKeywords": {
+    "enabled": false,
+    "topN": 20,
+    "minLen": 2,
+    "minFreq": 3,
+    "maxFreq": 10,
+    "window": 4,
+    "pos": [
+      "n",
+      "nr",
+      "ns",
+      "nt",
+      "nz",
+      "vn",
+      "i",
+      "l",
+      "j"
+    ]
+  },
+  "excludeWords": [],
+  "keywords": [
+    "元命题",
+    "工具理性",
+    "操作化",
+    "实践理性",
+    "僭越",
+    "道德哲学",
+    "最终解释项",
+    "个人利己",
+    "精英认知外衣",
+    "仁义礼智信",
+    "仁者安仁",
+    "知者利仁",
+    "克己复礼",
+    "见利思义",
+    "人而无信",
+    "和为贵",
+    "君子喻于义",
+    "规范秩序",
+    "公共善",
+    "什么值得",
+    "不能卖的东西",
+    "仁",
+    "义",
+    "礼",
+    "智",
+    "信","僭越","仁义礼智信","正直","诚实","善良","勇敢","风险计算","可预测性","操作化","个人利己","利益计算","道德哲学","最终解释项","仁者安仁","知者利仁"
+  ]
+}

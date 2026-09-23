@@ -3,9 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npx --yes hyperframes@0.7.17 preview",
-    "check": "npx --yes hyperframes@0.7.17 lint && npx --yes hyperframes@0.7.17 validate && npx --yes hyperframes@0.7.17 inspect",
-    "render": "npx --yes hyperframes@0.7.17 render",
-    "publish": "npx --yes hyperframes@0.7.17 publish"
+    "dev": "npx --yes hyperframes@0.8.62 preview",
+    "check": "npx --yes hyperframes@0.8.62 lint && npx --yes hyperframes@0.8.62 validate && npx --yes hyperframes@0.8.62 inspect",
+    "render": "npx --yes hyperframes@0.8.62 render",
+    "publish": "npx --yes hyperframes@0.8.62 publish",
+    "cp-audio": "sh scripts/cp-audio.sh && node scripts/build-audio.mjs",
+    "build-audio": "node scripts/build-audio.mjs",
+    "keyword-prompt": "node scripts/keyword-prompt.mjs"
+  },
+  "devDependencies": {
+    "jieba-wasm": "^2.4.0"
   }
 }
