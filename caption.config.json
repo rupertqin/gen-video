@@ -10,7 +10,9 @@
     "excludeWords — 人工覆盖词表（默认空）：只用于词典没收录、但确实不该点亮的复合词。常规情况由 jieba 词典自动判定。",
     "keywords — 人工提供的强调词表，命中的词会渲染成超大强调词。",
     "关键词命中必须落在 jieba 词典的词边界上：『义』落在『意义』里不会点亮。",
-    "要强调整个术语就用整个术语作关键词（如『仁义礼智信』），单字关键词只在它独立成字时才亮。"
+    "要强调整个术语就用整个术语作关键词（如『仁义礼智信』），单字关键词只在它独立成字时才亮。",
+    "timing.offset — 字幕整体平移（秒）。负数 = 整体提前，正数 = 整体延后。先平移句子时间戳再按字数均分，所以句内节奏不变；越出视频开头 / 音频末尾的部分会被截断。改完运行：npm run build-audio",
+    "color.scrim 的底色值要和 index.html 里 :root 的 --bg-rgb 保持一致（那是画面底色）；改底色时两处一起改。"
   ],
   "scale": 1.3,
   "font": {
@@ -22,10 +24,10 @@
     "emphasisPadEm": 0.06
   },
   "color": {
-    "text": "#2A2620",
+    "text": "#1E2528",
     "emphasis": "#3F6E5C",
-    "textShadow": "0 1px 0 rgba(255,255,255,0.7)",
-    "scrim": "linear-gradient(180deg, rgba(246,243,236,0) 0%, rgba(246,243,236,0.55) 42%, rgba(246,243,236,0.96) 100%)"
+    "textShadow": "0 1px 0 rgba(255,255,255,0.75)",
+    "scrim": "linear-gradient(180deg, rgba(237,242,244,0) 0%, rgba(237,242,244,0.55) 42%, rgba(237,242,244,0.96) 100%)"
   },
   "stage": {
     "availableHeight": 600,
@@ -36,6 +38,9 @@
   "entrance": {
     "duration": 0.12,
     "fromScale": 1.12
+  },
+  "timing": {
+    "offset": -0.15
   },
   "maxKeywordsPerClause": 2,
   "_autoKeywords": "用 jieba 从本文自动补主题词：pos 是保留的词性（用来滤掉连词/副词/代词/助词），minFreq 与 maxFreq 卡频次，topN 取排名前几个；TextRank 负责『与主题相关』。",

@@ -3,11 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npx --yes hyperframes@0.8.62 preview",
+    "dev": "npm run build && npx --yes hyperframes@0.8.62 preview",
     "check": "npx --yes hyperframes@0.8.62 lint && npx --yes hyperframes@0.8.62 validate && npx --yes hyperframes@0.8.62 inspect",
     "render": "npx --yes hyperframes@0.8.62 render",
     "publish": "npx --yes hyperframes@0.8.62 publish",
-    "cp-audio": "sh scripts/cp-audio.sh && node scripts/build-audio.mjs",
+    "cp-audio": "sh scripts/cp-audio.sh && npm run build",
+    "build": "npm run build-config && npm run build-audio",
+    "build-config": "node scripts/build-config.mjs",
     "build-audio": "node scripts/build-audio.mjs",
     "keyword-prompt": "node scripts/keyword-prompt.mjs"
   },

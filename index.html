@@ -10,15 +10,32 @@
     @font-face { font-family: "Songti SC"; src: local("Songti SC"), local("STSong"), local("Songti"); }
 
     :root {
-      --bg: #F6F3EC;
-      --panel: #FFFFFF;
-      --ink: #2A2620;
-      --ink-dim: #5C564B;
-      --ink-faint: #7A7264;
-      --accent: #5E8C7A;
+      /* ---------------- 中性色：冷调纸白 ----------------
+         原来 #F6F3EC 是黄调米色（色相 ≈43°），配上暖黑 #2A2620 和陶土色 --accent-2，
+         三个暖色叠在一起就发「土」。现在把整条中性色阶挪到冷调（色相 ≈200°），
+         和品牌绿 --accent 同属冷侧；画面里唯一的暖色留给照片本身（粉衬衫 / 肤色）。
+         --bg-rgb 是底色的唯一来源：html/body、#root、照片下沿渐隐都用它，
+         以后换底色只改这一行。 */
+      --bg-rgb: 237, 242, 244;    /* #EDF2F4 冷调纸白 */
+      --bg: rgb(var(--bg-rgb));
+      --ink: #1E2528;             /* 冷调近黑：与底色同色相，不再用暖黑 */
+      --ink-dim: #55636A;
+      --ink-faint: #7C8A90;
+      --panel: #FAFCFC;           /* 不用纯白，向底色靠一点 */
+      --accent: #5E8C7A;          /* 品牌绿：角标 / 字幕强调字，不动 */
       --accent-ink: #35604E;
       --accent-2: #BC6F3C;
-      --line: rgba(42, 38, 32, 0.14);
+      --line: rgba(30, 37, 40, 0.14);
+
+      /* 版面栅格：与 caption.config.json 的 stage.sidePadding=72 对齐，
+         让照片、水印、字幕、页脚共用同一条侧边线 */
+      --gutter: 72px;
+      /* 下面这几个是兜底默认值：构建时会被根目录 config.json 生成的那一段覆写。
+         所以平时改配置请改 config.json，再跑 npm run build-config，不要直接动这里。 */
+      --title: "";          /* 背景标题文字（config.json: title） */
+      --hero-fit: cover;    /* 背景图铺法（两档都用 cover，档位定义见 scripts/build-config.mjs） */
+      --hero-h: 720px;      /* 照片区高度（config.json: heroFit） */
+      --hero-top: 482px;    /* 照片区顶边 */
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,22 +45,24 @@
     /* ---------------- 常驻背景（浅色纸感） ---------------- */
     #bg { position: absolute; inset: 0; z-index: 0; }
 
-    /* 顶部主视觉：原图 1080×607，裁到 560 高（头 + 手 + 上肩），下沿渐隐入纸感 */
+    /* 主视觉：bg1.webp（原图 960×640）。铺法 / 高度 / 顶边三个值都由 --hero-* 控制，
+       档位定义见 :root 的「两种铺法」。底边 + 下沿渐隐完成「照片 → 纸 → 字幕」的分区过渡。 */
     .bg-hero {
-      position: absolute; left: 0; top: 0; width: 1080px; height: 560px;
-      background-image: url("assets/bg/hero.jpg");
-      background-size: 1080px 607px;
+      position: absolute; left: 0; top: var(--hero-top); width: 1080px; height: var(--hero-h);
+      background-image: url("assets/bg/bg1.webp");
+      background-size: var(--hero-fit);
       background-repeat: no-repeat;
       background-position: center top;
     }
     .bg-hero::after {
       content: ""; position: absolute; inset: 0;
+      /* 渐隐落点直接取 --bg-rgb，换底色不会在这里留一条色差 */
       background: linear-gradient(180deg,
-        rgba(246,243,236,0) 0%,
-        rgba(246,243,236,0) 58%,
-        rgba(246,243,236,0.42) 74%,
-        rgba(246,243,236,0.86) 88%,
-        #F6F3EC 100%);
+        rgba(var(--bg-rgb), 0) 0%,
+        rgba(var(--bg-rgb), 0) 46%,
+        rgba(var(--bg-rgb), 0.40) 64%,
+        rgba(var(--bg-rgb), 0.84) 82%,
+        rgb(var(--bg-rgb)) 100%);
     }
     .bg-wash1 {
       position: absolute; width: 1000px; height: 1000px; left: -300px; top: -380px; border-radius: 50%;
@@ -52,22 +71,35 @@
     }
     .bg-wash2 {
       position: absolute; width: 900px; height: 900px; right: -300px; bottom: -380px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(188,111,60,0.14) 0%, rgba(188,111,60,0) 68%);
+      /* 原来是陶土色（188,111,60）——暖色光晕在冷底上会把整页重新拉回暖/土。
+         改成冷青灰，页面保持冷调，暖色只剩照片 */
+      background: radial-gradient(circle, rgba(126,158,168,0.16) 0%, rgba(126,158,168,0) 68%);
       transform-origin: center;
     }
     .bg-grid {
       position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(42,38,32,0.045) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(42,38,32,0.045) 1px, transparent 1px);
+        linear-gradient(rgba(30,37,40,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30,37,40,0.05) 1px, transparent 1px);
       background-size: 80px 80px;
     }
-    .bg-ghost {
-      position: absolute; right: 10px; top: 615px; font-family: "Songti SC", serif; font-weight: 900;
+    .bg-title {
+      /* 水平居中：left/right 撑满 + width:fit-content + margin auto。
+         不能用 translateX(-50%) —— GSAP 会往这个元素写 transform（环境位移），会把它顶掉 */
+      position: absolute; left: 0; right: 0; width: fit-content;
+      margin-left: auto; margin-right: auto;
+      /* 贴在照片区底边上方 122px（≈ 标题自身高度），两种铺法自动跟随：
+         width 档 → 1080，height 档 → 1030。始终落在照片溶尽后的纸面上 */
+      top: calc(var(--hero-top) + var(--hero-h) - 122px);
+      font-family: "Songti SC", serif; font-weight: 900;
       font-size: 340px; line-height: 1; letter-spacing: -0.04em; white-space: nowrap;
-      color: rgba(42,38,32,0.022);
+      /* 标题：跟着新的冷调中性色走（旧的暖黑 42,38,32 配冷底会发脏）。
+         38% 的冷墨是「清楚的灰」，不抢照片；想更抢眼可以换成品牌绿 --accent-ink */
+      color: rgba(30, 37, 40, 0.38);
     }
-    .bg-ghost::before { content: "元命题"; }
+    /* 文字来自 config.json 的 title（构建时写成 --title，带引号的 CSS 字符串）。
+       留空时 content 不产出内容，整块自然消失 */
+    .bg-title::before { content: var(--title); }
     .bg-marks { position: absolute; inset: 40px; }
     .bg-marks::before, .bg-marks::after {
       content: ""; position: absolute; width: 24px; height: 24px; border-color: rgba(94,140,122,0.45);
@@ -75,7 +107,7 @@
     .bg-marks::before { left: 0; top: 0; border-left: 2px solid; border-top: 2px solid; }
     .bg-marks::after { right: 0; bottom: 0; border-right: 2px solid; border-bottom: 2px solid; }
     .bg-foot {
-      position: absolute; left: 76px; right: 76px; bottom: 38px;
+      position: absolute; left: var(--gutter); right: var(--gutter); bottom: 38px;
       display: flex; justify-content: space-between; align-items: baseline;
       font-family: "JetBrains Mono", "PingFang SC", monospace; font-size: 15px; letter-spacing: 0.12em; color: var(--ink-dim);
     }
@@ -98,6 +130,12 @@
     }
     .rule { width: 88px; height: 3px; background: var(--accent); margin-top: 28px; }
     .scene-body { margin-top: 46px; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+
+    /* ---------------- 画面中间「文稿 / PPT」层开关 ----------------
+       隐藏整个中间文稿层：场景标签 · 页码 · 标题 · 分隔线 · 正文，
+       只保留顶部主视觉与底部字幕。恢复：删掉下面这一行即可。
+       只想去掉正文而保留标题：把 .scene-inner 换成 .scene-body。 */
+    .scene-inner { display: none; }
 
     /* ---------------- 内容样式 ---------------- */
     .lead { font-family: "PingFang SC", sans-serif; font-size: 29px; line-height: 1.72; color: var(--ink-dim); }
@@ -155,9 +193,23 @@
     .final { font-family: "Songti SC", serif; font-weight: 700; font-size: 32px; line-height: 1.55; color: var(--ink); }
     .final .hl { color: var(--accent-ink); }
   </style>
+
+  <!-- __HF_CONFIG_START__ -->
+  <style>
+    /* 自动生成：来自根目录 config.json，请勿手改。改配置后运行 npm run build-config */
+    :root {
+      --title: "蔡康永的心理分析";
+      --hero-fit: cover;
+      /* width 档的框比例恰好等于原图比例 → cover 等于整幅不裁切；
+         height 档的框更瘦 → cover 自动变成「按高度铺 + 左右裁掉」 */
+      --hero-h: 1152px;
+      --hero-top: 0px;
+    }
+  </style>
+  <!-- __HF_CONFIG_END__ -->
 </head>
 <body>
-  <div data-hf-id="hf-xrp1" id="root" data-composition-id="main" data-width="1080" data-height="1920" data-start="0" data-duration="416">
+  <div data-hf-id="hf-xrp1" id="root" data-composition-id="main" data-width="1080" data-height="1920" data-start="0" data-duration="1162">
 
     <!-- ========== 常驻背景 ========== -->
     <div style="z-index: 1" data-hf-id="hf-5qeh" id="bg" data-layout-ignore="" data-start="0" data-track-index="0">
@@ -165,7 +217,7 @@
       <div data-hf-id="hf-4sg8" class="bg-wash1" data-start="0" data-track-index="3"></div>
       <div data-hf-id="hf-dgc3" class="bg-wash2" data-start="0" data-track-index="4"></div>
       <div data-hf-id="hf-yqqm" class="bg-grid"></div>
-      <div data-hf-id="hf-ui8a" class="bg-ghost" data-layout-ignore="" data-start="0" data-track-index="6"></div>
+      <div data-hf-id="hf-ui8a" class="bg-title" data-layout-ignore="" data-start="0" data-track-index="6"></div>
       <div data-hf-id="hf-t7d4" class="bg-marks"></div>
       <div data-hf-id="hf-xng6" class="bg-foot" data-start="0" data-track-index="7">
         <span data-hf-id="hf-bfg3">元命题的缺位 <span data-hf-id="hf-hql7" class="dot">·</span> 评墨苍离的工具理性</span>
@@ -173,9 +225,9 @@
       </div>
     </div>
 
-    <audio data-hf-id="hf-bqim" id="voice" src="assets/audio/audio.wav" data-start="0" data-duration="415.52" data-track-index="10"></audio>
+    <audio data-hf-id="hf-bqim" id="voice" src="assets/audio/audio.wav" data-start="0" data-duration="1161.52" data-track-index="10"></audio>
 
-    <div data-hf-id="hf-3b7k" id="captions" class="clip caption-host" data-composition-id="captions" data-composition-src="compositions/captions.html" data-start="0" data-duration="415.52" data-track-index="5" data-track-kind="captions" data-width="1080" data-height="1920" data-layout-ignore></div>
+    <div data-hf-id="hf-3b7k" id="captions" class="clip caption-host" data-composition-id="captions" data-composition-src="compositions/captions.html" data-start="0" data-duration="1161.52" data-track-index="5" data-track-kind="captions" data-width="1080" data-height="1920" data-layout-ignore></div>
 
     <!-- ========== 01 标题 ========== -->
     <section data-hf-id="hf-bqk6" id="s1" class="clip scene" data-start="0" data-duration="11.64" data-track-index="1">
@@ -505,8 +557,8 @@ gsap.set("[data-hf-id=\"hf-4sg8\"]", { rotation: -19 });
 
     /* ---- 背景环境动画 ---- */
     tl.to(".bg-wash1", { scale: 1.14, duration: 7,  ease: "sine.inOut", yoyo: true, repeat: 29 }, 0);
-    tl.to(".bg-wash2", { scale: 1.18, x: 40, duration: 9, ease: "sine.inOut", yoyo: true, repeat: 22 }, 0);
-    tl.to(".bg-ghost", { x: -80, duration: 36, ease: "sine.inOut", yoyo: true, repeat: 4 }, 0);
+        /* 标题是水平居中的，所以环境位移只能走纵向 —— 横向漂移会把居中的字推偏 */
+    tl.to(".bg-title", { y: -30, duration: 36, ease: "sine.inOut", yoyo: true, repeat: 4 }, 0);
     tl.fromTo(".bg-foot", { opacity: 0 }, { opacity: 1, duration: 0.9, ease: "power2.out" }, 0.3);
 
     /* ---- 场景 ---- */
@@ -539,9 +591,34 @@ gsap.set("[data-hf-id=\"hf-4sg8\"]", { rotation: -19 });
       tl.fromTo(sel + ".scene-body .ar", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.13, overwrite: "auto" }, t + 0.58);
       tl.to(sel + ".scene-inner", { opacity: 0, duration: 0.4, ease: "power2.in", overwrite: "auto" }, s.end - 0.44);
       tl.set(sel + ".scene-inner", { opacity: 0 }, s.end);
+tl.to(".bg-wash2", { scale: 1.18, duration: 9, ease: "sine.inOut", yoyo: true, repeat: 22 }, 0);
+tl.to(".bg-wash2", { keyframes: { "0%": { x: 0, y: 0 }, "9.3%": { x: 40 }, "100%": { x: 850, y: -700 } }, duration: 96.633 }, 0);
     });
 
     window.__timelines["main"] = tl;
+
+    /* ---- 背景标题自适应 ----
+       .bg-title 是水平居中的单行不换行文字；文字一多就左右溢出，被 #root 的
+       overflow:hidden 裁掉（例如 7 个字在 340px 下宽 2611px，画幅只有 1080px）。
+       所以这里量一次真实宽度，超宽就等比缩小字号，保证整行留在画幅内。 */
+    (function () {
+      var title = document.querySelector(".bg-title");
+      if (!title) return;
+      var BASE = 340;              // 基准字号：放得下就用它
+      var SIDE_GAP = 40;           // 在 --gutter 之外再留的余量，让居中的标题不贴边
+      function fit() {
+        var root = document.getElementById("root") || document.documentElement;
+        // 可用宽度 = 画幅 − 左右各一条（--gutter + 余量）
+        var g = parseInt(getComputedStyle(root).getPropertyValue("--gutter"), 10) || 0;
+        var maxW = (root.clientWidth || 1080) - (g + SIDE_GAP) * 2;
+        title.style.fontSize = BASE + "px";
+        var w = title.getBoundingClientRect().width;
+        if (w > maxW) title.style.fontSize = Math.floor((BASE * maxW) / w) + "px";
+      }
+      fit();
+      // 字体度量会影响宽度：字体就绪后再量一次
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    })();
   </script>
 </body>
 </html>

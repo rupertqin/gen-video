@@ -1,0 +1,22 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    devDependencies:
+      jieba-wasm:
+        specifier: ^2.4.0
+        version: 2.4.0
+
+packages:
+
+  jieba-wasm@2.4.0:
+    resolution: {integrity: sha512-ZvQdS+FGifrFXZIXSgOyOgEz+1wdy1P4vSvwe37FVtku9ycSdHTZbHqF5i9tMN1JucoAmeiLBeI6/YaqcGD+KA==}
+
+snapshots:
+
+  jieba-wasm@2.4.0: {}

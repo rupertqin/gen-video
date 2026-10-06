@@ -50,13 +50,23 @@ export const countIn = (plain, term) => {
  *   groups [{ index, ws, we, start, end, text }]
  *   cues   原始分句
  *   plain  去标点全文（计数基准）
+ *
+ * 选项：
+ *   offset   整体平移（秒）。负数 = 字幕整体提前，正数 = 整体延后。
+ *            在"句"这一层先平移、再按字数均分 —— 句内节奏因此不受影响；
+ *            越出 [0, maxTime] 的部分在句级被截断，不会把某句压成零点几秒。
+ *   maxTime  上界（通常是音频长度），默认不限。
  */
-export function loadChars(sentSrtPath) {
+export function loadChars(sentSrtPath, { offset = 0, maxTime = Infinity } = {}) {
   const cues = parseSrt(fs.readFileSync(sentSrtPath, "utf8"));
   const chars = [];
   const groups = [];
 
   for (const cue of cues) {
+    // 先做整体平移 + 边界截断，后续均分全部基于 cs/ce
+    const cs = Math.min(maxTime, Math.max(0, cue.start + offset));
+    const ce = Math.min(maxTime, Math.max(cs, cue.end + offset));
+
     // 分字：标点并入前一个字
     const units = [];
     for (const ch of cue.text) {
@@ -66,16 +76,16 @@ export function loadChars(sentSrtPath) {
     if (!units.length) continue;
 
     const slots = Math.max(1, units.reduce((n, u) => n + u.spoken, 0));
-    const span = cue.end - cue.start;
+    const span = ce - cs;
     const ws = chars.length;
     let acc = 0;
     for (const u of units) {
-      const start = cue.start + (span * acc) / slots;
+      const start = cs + (span * acc) / slots;
       acc += u.spoken;
       chars.push({
         text: u.text,
         start,
-        end: cue.start + (span * acc) / slots,
+        end: cs + (span * acc) / slots,
         group: groups.length,
       });
     }
@@ -83,8 +93,8 @@ export function loadChars(sentSrtPath) {
       index: groups.length,
       ws,
       we: chars.length - 1,
-      start: cue.start,
-      end: cue.end,
+      start: cs,
+      end: ce,
       text: cue.text,
     });
   }

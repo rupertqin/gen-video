@@ -60,7 +60,8 @@ const cfgStr = (v, key) => {
 const F = CFG.font || {},
   C = CFG.color || {},
   S = CFG.stage || {},
-  E = CFG.entrance || {};
+  E = CFG.entrance || {},
+  TM = CFG.timing || {};
 
 const SCALE = cfgNum(CFG.scale, "scale", 0.1, 5);
 const NORMAL_PX = Math.round(cfgNum(F.normalPx, "font.normalPx", 8) * SCALE);
@@ -79,6 +80,8 @@ const MARGIN_BOTTOM_PX = cfgNum(S.bottomMargin, "stage.bottomMargin", 0, CANVAS_
 const SCRIM_H = cfgNum(S.scrimHeight, "stage.scrimHeight", 0, CANVAS_H);
 const ENTRY = cfgNum(E.duration, "entrance.duration", 0.01, 2);
 const ENTRY_FROM = cfgNum(E.fromScale, "entrance.fromScale", 1, 2);
+// 字幕整体平移（秒）：负数 = 整体提前，正数 = 整体延后。限 ±5s 防止手抖写错数量级
+const SHIFT = cfgNum(TM.offset ?? 0, "timing.offset", -5, 5);
 const MAX_KW = cfgNum(CFG.maxKeywordsPerClause, "maxKeywordsPerClause", 1, 5);
 
 // 强调词表（人工提供）
@@ -193,7 +196,10 @@ const audioLen = wavDuration(WAV);
 const dur = +audioLen.toFixed(3);
 
 /* ---------- 字 / 分句（见 scripts/lib/srt.mjs） ---------- */
-const { chars: units, groups, plain } = loadChars(SENT_SRT);
+const { chars: units, groups, plain } = loadChars(SENT_SRT, {
+  offset: SHIFT,
+  maxTime: dur,
+});
 
 /* ---------- 自动抽取主题词：jieba 词性过滤 + TextRank ---------- */
 // 三个要求分别由三件事解决：
@@ -748,5 +754,7 @@ console.log(
   `units=${units.length} blocks=${blocks.length} 强调词=${emCount} 含强调的次行=${emLineCount}`,
 );
 console.log(
-  `audio=${audioLen.toFixed(2)}s  根时长=${Math.ceil(audioLen)}  音轨/槽=${dur}`,
+  `audio=${audioLen.toFixed(2)}s  根时长=${Math.ceil(audioLen)}  音轨/槽=${dur}  字幕偏移=${
+    SHIFT ? (SHIFT > 0 ? "+" : "") + SHIFT + "s" : "0"
+  }`,
 );
