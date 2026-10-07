@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=1080, height=1920">
-  <title>元命题的缺位 · 评墨苍离的工具理性</title>
+  <title>主页</title>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <style>
     @font-face { font-family: "PingFang SC"; src: local("PingFang SC"), local("PingFangSC-Regular"), local("Hiragino Sans GB"); }
@@ -27,9 +27,10 @@
       --accent-2: #BC6F3C;
       --line: rgba(30, 37, 40, 0.14);
 
-      /* 版面栅格：与 caption.config.json 的 stage.sidePadding=72 对齐，
-         让照片、水印、字幕、页脚共用同一条侧边线 */
-      --gutter: 72px;
+      /* 安全线（兜底默认值）：构建时会被 config 生成的那一段覆写 —— 值来自 caption.config.json 的
+         stage.leftPadding / rightPadding，与字幕共用同一组数字。改配置请改那个文件，不要动这里。 */
+      --gutter: 180px;
+      --gutter-right: 180px;
       /* 下面这几个是兜底默认值：构建时会被根目录 config.json 生成的那一段覆写。
          所以平时改配置请改 config.json，再跑 npm run build-config，不要直接动这里。 */
       --title: "";          /* 背景标题文字（config.json: title） */
@@ -64,18 +65,6 @@
         rgba(var(--bg-rgb), 0.84) 82%,
         rgb(var(--bg-rgb)) 100%);
     }
-    .bg-wash1 {
-      position: absolute; width: 1000px; height: 1000px; left: -300px; top: -380px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(94,140,122,0.17) 0%, rgba(94,140,122,0.05) 44%, rgba(94,140,122,0) 72%);
-      transform-origin: center;
-    }
-    .bg-wash2 {
-      position: absolute; width: 900px; height: 900px; right: -300px; bottom: -380px; border-radius: 50%;
-      /* 原来是陶土色（188,111,60）——暖色光晕在冷底上会把整页重新拉回暖/土。
-         改成冷青灰，页面保持冷调，暖色只剩照片 */
-      background: radial-gradient(circle, rgba(126,158,168,0.16) 0%, rgba(126,158,168,0) 68%);
-      transform-origin: center;
-    }
     .bg-grid {
       position: absolute; inset: 0;
       background-image:
@@ -106,13 +95,6 @@
     }
     .bg-marks::before { left: 0; top: 0; border-left: 2px solid; border-top: 2px solid; }
     .bg-marks::after { right: 0; bottom: 0; border-right: 2px solid; border-bottom: 2px solid; }
-    .bg-foot {
-      position: absolute; left: var(--gutter); right: var(--gutter); bottom: 38px;
-      display: flex; justify-content: space-between; align-items: baseline;
-      font-family: "JetBrains Mono", "PingFang SC", monospace; font-size: 15px; letter-spacing: 0.12em; color: var(--ink-dim);
-    }
-    .bg-foot .dot { color: var(--accent); }
-
     /* ---------------- 场景骨架 ---------------- */
     .scene { position: absolute; inset: 0; z-index: 1; }
     .scene-inner { position: absolute; inset: 0; padding: 600px 76px 230px; display: flex; flex-direction: column; }
@@ -130,12 +112,6 @@
     }
     .rule { width: 88px; height: 3px; background: var(--accent); margin-top: 28px; }
     .scene-body { margin-top: 46px; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
-
-    /* ---------------- 画面中间「文稿 / PPT」层开关 ----------------
-       隐藏整个中间文稿层：场景标签 · 页码 · 标题 · 分隔线 · 正文，
-       只保留顶部主视觉与底部字幕。恢复：删掉下面这一行即可。
-       只想去掉正文而保留标题：把 .scene-inner 换成 .scene-body。 */
-    .scene-inner { display: none; }
 
     /* ---------------- 内容样式 ---------------- */
     .lead { font-family: "PingFang SC", sans-serif; font-size: 29px; line-height: 1.72; color: var(--ink-dim); }
@@ -196,8 +172,12 @@
 
   <!-- __HF_CONFIG_START__ -->
   <style>
-    /* 自动生成：来自根目录 config.json，请勿手改。改配置后运行 npm run build-config */
+    /* 自动生成：来自根目录 config.json + caption.config.json，请勿手改。改配置后运行 npm run build-config */
     :root {
+      /* 安全线：与字幕共用同一组数字，来源 caption.config.json 的 stage.leftPadding / rightPadding。
+         标题、页脚用它；照片是全幅通栏，不受影响 */
+      --gutter: 180px;
+      --gutter-right: 180px;
       --title: "蔡康永的心理分析";
       --hero-fit: cover;
       /* width 档的框比例恰好等于原图比例 → cover 等于整幅不裁切；
@@ -209,391 +189,38 @@
   <!-- __HF_CONFIG_END__ -->
 </head>
 <body>
-  <div data-hf-id="hf-xrp1" id="root" data-composition-id="main" data-width="1080" data-height="1920" data-start="0" data-duration="1162">
+  <div data-hf-id="hf-xrp1" id="root" data-composition-id="main" data-width="1080" data-height="1920" data-start="0" data-duration="1680">
 
     <!-- ========== 常驻背景 ========== -->
     <div style="z-index: 1" data-hf-id="hf-5qeh" id="bg" data-layout-ignore="" data-start="0" data-track-index="0">
       <div data-hf-id="hf-hero" class="bg-hero"></div>
-      <div data-hf-id="hf-4sg8" class="bg-wash1" data-start="0" data-track-index="3"></div>
-      <div data-hf-id="hf-dgc3" class="bg-wash2" data-start="0" data-track-index="4"></div>
       <div data-hf-id="hf-yqqm" class="bg-grid"></div>
       <div data-hf-id="hf-ui8a" class="bg-title" data-layout-ignore="" data-start="0" data-track-index="6"></div>
       <div data-hf-id="hf-t7d4" class="bg-marks"></div>
-      <div data-hf-id="hf-xng6" class="bg-foot" data-start="0" data-track-index="7">
-        <span data-hf-id="hf-bfg3">元命题的缺位 <span data-hf-id="hf-hql7" class="dot">·</span> 评墨苍离的工具理性</span>
-        <span data-hf-id="hf-eyss">LECTURE NOTES</span>
-      </div>
     </div>
 
-    <audio data-hf-id="hf-bqim" id="voice" src="assets/audio/audio.wav" data-start="0" data-duration="1161.52" data-track-index="10"></audio>
+    <!-- 播放源用压缩版 audio.m4a（15MB），不是母版 audio.wav（111MB）。
+         框架运行时会强制 audio.preload="auto"，也就是抢着把整个文件读完并等它就绪；
+         111MB 时这一步要 ~50s，预览要等就绪才切成 9:16，于是长时间停在横屏。
+         15MB 时这一步降到秒级。母版 wav 仍留在 assets/audio/ 里做时长基准与再生成来源，
+         由 scripts/make-preview-audio.sh 生成 m4a（时长一致：1161.52s）。 -->
+    <audio data-hf-id="hf-bqim" id="voice" src="assets/audio/audio.m4a" data-start="0" data-duration="1679.36" data-track-index="10"></audio>
 
-    <div data-hf-id="hf-3b7k" id="captions" class="clip caption-host" data-composition-id="captions" data-composition-src="compositions/captions.html" data-start="0" data-duration="1161.52" data-track-index="5" data-track-kind="captions" data-width="1080" data-height="1920" data-layout-ignore></div>
+    <div data-hf-id="hf-3b7k" id="captions" class="clip caption-host" data-composition-id="captions" data-composition-src="compositions/captions.html" data-start="0" data-duration="1679.36" data-track-index="5" data-track-kind="captions" data-width="1080" data-height="1920" data-layout-ignore></div>
 
-    <!-- ========== 01 标题 ========== -->
-    <section data-hf-id="hf-bqk6" id="s1" class="clip scene" data-start="0" data-duration="11.64" data-track-index="1">
-      <div data-hf-id="hf-97sb" class="scene-inner">
-        <div data-hf-id="hf-5gif" class="scene-head">
-          <div data-hf-id="hf-k96n" class="scene-tag">辨析</div>
-          <div data-hf-id="hf-deaf" class="scene-index"><b data-hf-id="hf-27a2">01</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-j8io" class="scene-title">工具理性，还是元命题的僭越？</h2>
-        <div data-hf-id="hf-a46i" class="rule"></div>
-        <div data-hf-id="hf-9r3x" class="scene-body">
-          <p data-hf-id="hf-zj80" class="lead ar">以他论 <strong data-hf-id="hf-x8vx">「正直 · 诚实 · 善良」</strong> 与 <strong data-hf-id="hf-cj6w">「孔子的仁义礼智信」</strong> 的两篇文章为例。</p>
-        </div>
-      </div>
-    </section>
 
-    <!-- ========== 02 论点 ========== -->
-    <section data-hf-id="hf-3qgp" id="s2" class="clip scene" data-start="11.64" data-duration="10.57" data-track-index="1">
-      <div data-hf-id="hf-skgb" class="scene-inner">
-        <div data-hf-id="hf-sdlj" class="scene-head">
-          <div data-hf-id="hf-gd49" class="scene-tag">真正的问题</div>
-          <div data-hf-id="hf-ddp3" class="scene-index"><b data-hf-id="hf-2ll3">02</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-9ygu" class="scene-title">他在重新解释价值，还是把价值换成了"能力"？</h2>
-        <div data-hf-id="hf-ya9a" class="rule"></div>
-        <div data-hf-id="hf-jtzl" class="scene-body">
-          <p data-hf-id="hf-gwoc" class="lead ar">看起来是在重新解释传统价值；真正值得注意的是——他<span data-hf-id="hf-jqsa" class="hl">持续把价值转换成个人处理现实所需的能力</span>。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 03 操作化一 ========== -->
-    <section data-hf-id="hf-pnjx" id="s3" class="clip scene" data-start="22.21" data-duration="27.65" data-track-index="1">
-      <div data-hf-id="hf-s65a" class="scene-inner">
-        <div data-hf-id="hf-rzai" class="scene-head">
-          <div data-hf-id="hf-j439" class="scene-tag">操作化 · 一</div>
-          <div data-hf-id="hf-cze2" class="scene-index"><b data-hf-id="hf-2zw4">03</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-x3i9" class="scene-title">诚实 · 善良 · 正直 · 勇敢，都成了能力</h2>
-        <div data-hf-id="hf-yokb" class="rule"></div>
-        <div data-hf-id="hf-l0wo" class="scene-body">
-          <div data-hf-id="hf-irfi" class="def-list">
-            <div data-hf-id="hf-7uau" class="def ar"><div data-hf-id="hf-rn0s" class="def-term">诚实</div><div data-hf-id="hf-65sg" class="def-desc">一种<b data-hf-id="hf-uwua">认知能力</b>：更准确地处理现实，避免自我欺骗。</div></div>
-            <div data-hf-id="hf-3sfe" class="def ar"><div data-hf-id="hf-fntp" class="def-term">善良</div><div data-hf-id="hf-mv5x" class="def-desc">一种<b data-hf-id="hf-1wh5">能力</b>：能伤害别人却选择克制，能看见弱点却不利用。</div></div>
-            <div data-hf-id="hf-46qf" class="def ar"><div data-hf-id="hf-ztur" class="def-term">正直</div><div data-hf-id="hf-piqu" class="def-desc">一种<b data-hf-id="hf-slyu">稳定的自我结构</b>：心里有几样东西不能拿去交换。</div></div>
-            <div data-hf-id="hf-4l1g" class="def ar"><div data-hf-id="hf-zd0h" class="def-term">勇敢</div><div data-hf-id="hf-2ffg" class="def-desc">一种<b data-hf-id="hf-1vuz">风险计算之后的行动能力</b>。</div></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 04 操作化二 ========== -->
-    <section data-hf-id="hf-w92x" id="s4" class="clip scene" data-start="49.86" data-duration="17.7" data-track-index="1">
-      <div data-hf-id="hf-rru9" class="scene-inner">
-        <div data-hf-id="hf-rkzh" class="scene-head">
-          <div data-hf-id="hf-we2p" class="scene-tag">操作化 · 二</div>
-          <div data-hf-id="hf-cl31" class="scene-index"><b data-hf-id="hf-3e75">04</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-ac45" class="scene-title">仁义礼智信，同样被功能化</h2>
-        <div data-hf-id="hf-z2vc" class="rule"></div>
-        <div data-hf-id="hf-kmln" class="scene-body">
-          <div data-hf-id="hf-7n0i" class="def-list">
-            <div data-hf-id="hf-4zch" class="def ar"><div data-hf-id="hf-jf3z" class="def-term">仁</div><div data-hf-id="hf-p005" class="def-desc">看见别人也是一个人，因此不去利用弱者。</div></div>
-            <div data-hf-id="hf-5dni" class="def ar"><div data-hf-id="hf-t5ag" class="def-term">礼</div><div data-hf-id="hf-49an" class="def-desc">给冲动加一道门，避免欲望直接变成行动。</div></div>
-            <div data-hf-id="hf-5ryj" class="def ar"><div data-hf-id="hf-txb3" class="def-term">信</div><div data-hf-id="hf-iruj" class="def-desc">让关系具有可预测性。</div></div>
-            <div data-hf-id="hf-669k" class="def ar"><div data-hf-id="hf-m7ju" class="def-term">智</div><div data-hf-id="hf-glo7" class="def-desc">判断什么问题值得解决，并协调其他价值在现实中的运作。</div></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 05 分界 ========== -->
-    <section data-hf-id="hf-s56t" id="s5" class="clip scene" data-start="67.56" data-duration="13.53" data-track-index="1">
-      <div data-hf-id="hf-rdj8" class="scene-inner">
-        <div data-hf-id="hf-ud4o" class="scene-head">
-          <div data-hf-id="hf-ye1h" class="scene-tag">分界</div>
-          <div data-hf-id="hf-fd88" class="scene-index"><b data-hf-id="hf-3si6">05</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-8xre" class="scene-title">差别不在"是否讲落实"，<br data-hf-id="hf-x5px">而在价值的地位</h2>
-        <div data-hf-id="hf-waq5" class="rule"></div>
-        <div data-hf-id="hf-in2i" class="scene-body">
-          <div data-hf-id="hf-86bp" class="panels">
-            <div data-hf-id="hf-3aqs" class="panel a ar">
-              <div data-hf-id="hf-8dee" class="panel-label">这套解释</div>
-              <div data-hf-id="hf-2lms" class="panel-text">价值 = 处理现实所需的能力。</div>
-            </div>
-            <div data-hf-id="hf-e24p" class="panel b ar">
-              <div data-hf-id="hf-k6wo" class="panel-label">孔子那里</div>
-              <div data-hf-id="hf-zef3" class="panel-text">价值首先具有<b data-hf-id="hf-v0lo">规范性的地位</b>。</div>
-            </div>
-          </div>
-          <p data-hf-id="hf-rkk2" class="note ar">仁义礼智信出现了一种非常明显的<span data-hf-id="hf-wac2" class="hl">操作化</span>。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 06 孔子 ========== -->
-    <section data-hf-id="hf-9p1m" id="s6" class="clip scene" data-start="81.09" data-duration="27.13" data-track-index="1">
-      <div data-hf-id="hf-qz87" class="scene-inner">
-        <div data-hf-id="hf-tytn" class="scene-head">
-          <div data-hf-id="hf-uma6" class="scene-tag">对照 · 孔子</div>
-          <div data-hf-id="hf-eyx7" class="scene-index"><b data-hf-id="hf-46t7">06</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-y0js" class="scene-title">落实之前，价值已经成立</h2>
-        <div data-hf-id="hf-wp16" class="rule"></div>
-        <div data-hf-id="hf-i8rh" class="scene-body">
-          <div data-hf-id="hf-81bj" class="def-list">
-            <div data-hf-id="hf-6kkl" class="def ar"><div data-hf-id="hf-ivr3" class="def-term">仁</div><div data-hf-id="hf-vrrb" class="def-desc">爱人 · 克己复礼 · 己所不欲，勿施于人<span data-hf-id="hf-rpkq" class="dim">——行动都建立在"仁"已成立的前提上。</span></div></div>
-            <div data-hf-id="hf-6yvm" class="def ar"><div data-hf-id="hf-xbh3" class="def-term">义</div><div data-hf-id="hf-4um1" class="def-desc">「君子喻于义，小人喻于利」「见利思义」<span data-hf-id="hf-qxz3" class="dim">——义与利是两套尺度。</span></div></div>
-            <div data-hf-id="hf-frzi" class="def ar"><div data-hf-id="hf-64jk" class="def-term">礼</div><div data-hf-id="hf-t41m" class="def-desc">「礼之用，和为贵」<span data-hf-id="hf-mwwd" class="dim">——共同生活的规范秩序，不只是控制冲动的技巧。</span></div></div>
-            <div data-hf-id="hf-fdoh" class="def ar"><div data-hf-id="hf-wxgf" class="def-term">信</div><div data-hf-id="hf-phfj" class="def-desc">「人而无信，不知其可也」<span data-hf-id="hf-tgg0" class="dim">——先是立身原则，然后才有关系中的可预测性。</span></div></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 07 智的位置 ========== -->
-    <section data-hf-id="hf-4tmj" id="s7" class="clip scene" data-start="108.22" data-duration="37.62" data-track-index="1">
-      <div data-hf-id="hf-qkx6" class="scene-inner">
-        <div data-hf-id="hf-tkim" class="scene-head">
-          <div data-hf-id="hf-ibxg" class="scene-tag">关键 · 智的位置</div>
-          <div data-hf-id="hf-ekm6" class="scene-index"><b data-hf-id="hf-8n3c">07</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-rmj6" class="scene-title">智没有成为"所有价值的总控制器"</h2>
-        <div data-hf-id="hf-x3c7" class="rule"></div>
-        <div data-hf-id="hf-jfok" class="scene-body">
-          <div data-hf-id="hf-s6mn" class="quote ar">仁者安仁，知者利仁。<span data-hf-id="hf-ma59" class="src">——《论语》</span></div>
-          <p data-hf-id="hf-9zc2" class="note ar">知者看到"利"而选择仁；仁者则安于仁本身。智可以帮助人理解与实践仁，<span data-hf-id="hf-aigw" class="hl">却不负责制造仁的价值</span>。</p>
-          <p data-hf-id="hf-2do0" class="note ar"><span data-hf-id="hf-y4mm" class="dim">这实际上就是元命题与操作之间的区别。</span></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 08 区分 ========== -->
-    <section data-hf-id="hf-5ncq" id="s8" class="clip scene" data-start="145.84" data-duration="25.72" data-track-index="1">
-      <div data-hf-id="hf-q6m5" class="scene-inner">
-        <div data-hf-id="hf-t67l" class="scene-head">
-          <div data-hf-id="hf-nefv" class="scene-tag">区分</div>
-          <div data-hf-id="hf-e6b5" class="scene-index"><b data-hf-id="hf-91ed">08</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-k0mc" class="scene-title">"怎样实现"与"为什么值得"，是两件事</h2>
-        <div data-hf-id="hf-xhn8" class="rule"></div>
-        <div data-hf-id="hf-j1dj" class="scene-body">
-          <div data-hf-id="hf-zbkp" class="panels">
-            <div data-hf-id="hf-wp24" class="panel a ar">
-              <div data-hf-id="hf-xvbi" class="panel-label">价值实现</div>
-              <div data-hf-id="hf-nh83" class="panel-text">仁怎样实践、义何时坚持、礼如何约束、勇气何时值得用——需要判断、经验与理性。</div>
-            </div>
-            <div data-hf-id="hf-29tp" class="panel b ar">
-              <div data-hf-id="hf-nmjh" class="panel-label">元命题</div>
-              <div data-hf-id="hf-gneo" class="panel-text">为什么这些价值<b data-hf-id="hf-hdts">本身</b>值得。</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 09 断层 ========== -->
-    <section data-hf-id="hf-88sl" id="s9" class="clip scene" data-start="171.56" data-duration="35.37" data-track-index="1">
-      <div data-hf-id="hf-w57k" class="scene-inner">
-        <div data-hf-id="hf-vycs" class="scene-head">
-          <div data-hf-id="hf-6myk" class="scene-tag">断层</div>
-          <div data-hf-id="hf-gygc" class="scene-index"><b data-hf-id="hf-9fpe">09</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-y5xg" class="scene-title">不回答"为什么值得"，理论就出现断层</h2>
-        <div data-hf-id="hf-12eh" class="rule"></div>
-        <div data-hf-id="hf-nequ" class="scene-body">
-          <div data-hf-id="hf-tejm" class="q-list">
-            <div data-hf-id="hf-5uaa" class="q ar"><span data-hf-id="hf-8wnd" class="mark">01</span><span data-hf-id="hf-av0c">诚实能提高认知准确性 —— <span data-hf-id="hf-ixab" class="dim">那为什么认知准确性值得追求？</span></span></div>
-            <div data-hf-id="hf-izfa" class="q ar"><span data-hf-id="hf-a3kg" class="mark">02</span><span data-hf-id="hf-gv87">正直能维持人格稳定 —— <span data-hf-id="hf-3fvr" class="dim">那为什么人格稳定值得维护？</span></span></div>
-            <div data-hf-id="hf-jdqb" class="q ar"><span data-hf-id="hf-9p9f" class="mark">03</span><span data-hf-id="hf-t1s7">善良能降低彼此伤害 —— <span data-hf-id="hf-amiu" class="dim">那为什么减少伤害本身具有规范意义？</span></span></div>
-            <div data-hf-id="hf-js1c" class="q ar"><span data-hf-id="hf-7pqa" class="mark">04</span><span data-hf-id="hf-mvid">勇敢让人付诸行动 —— <span data-hf-id="hf-5lgs" class="dim">那为什么某些行动即使代价很大也仍然值得？</span></span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 10 还原 ========== -->
-    <section data-hf-id="hf-9tb5" id="s10" class="clip scene" data-start="206.93" data-duration="20.5" data-track-index="1">
-      <div data-hf-id="hf-vqwj" class="scene-inner">
-        <div data-hf-id="hf-vk1r" class="scene-head">
-          <div data-hf-id="hf-v9qm" class="scene-tag">还原</div>
-          <div data-hf-id="hf-gk5b" class="scene-index"><b data-hf-id="hf-jyhw">10</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-y003" class="scene-title">追问下去，<br data-hf-id="hf-rsrt">解释会一路滑向个人</h2>
-        <div data-hf-id="hf-1gpi" class="rule"></div>
-        <div data-hf-id="hf-n0ft" class="scene-body">
-          <div data-hf-id="hf-i9yj" class="chain">
-            <div data-hf-id="hf-0tsh" class="chain-row ar"><span data-hf-id="hf-jw14">诚实之所以值得</span><span data-hf-id="hf-9kxd" class="dim">↓ 有利于认知</span></div>
-            <div data-hf-id="hf-cf9h" class="chain-row ar"><span data-hf-id="hf-fjpd">认知之所以值得</span><span data-hf-id="hf-4ont" class="dim">↓ 有利于判断</span></div>
-            <div data-hf-id="hf-dm6k" class="chain-row ar"><span data-hf-id="hf-3uk9">判断之所以值得</span><span data-hf-id="hf-r6xz" class="dim">↓ 有利于个人生存与发展</span></div>
-          </div>
-          <p data-hf-id="hf-561m" class="note ar">正直、善良、勇敢沿着同样的路径继续还原 —— 道德被重新放进了<span data-hf-id="hf-uf95" class="hl">"个人利己"的尺度</span>里。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 11 僭越 ========== -->
-    <section style="z-index: 0" data-hf-id="hf-zh5h" id="s11" class="clip scene" data-start="227.43" data-duration="18.01" data-track-index="1">
-      <div data-hf-id="hf-j0wx" class="scene-inner">
-        <div data-hf-id="hf-5ns5" class="scene-head">
-          <div data-hf-id="hf-o05w" class="scene-tag">僭越</div>
-          <div data-hf-id="hf-ezfp" class="scene-index"><b data-hf-id="hf-jk6v">11</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-4c81" class="scene-title">元命题上的判断，<br data-hf-id="hf-szow">不该交给次一级的操作来定义</h2>
-        <div data-hf-id="hf-l3ay" class="rule"></div>
-        <div data-hf-id="hf-a5bn" class="scene-body">
-          <p data-hf-id="hf-gyhd" class="lead ar">仁义礼智信可以被实践理性分析、被人格能力承载、被现实经验修正具体做法。</p>
-          <p data-hf-id="hf-l7ls" class="note ar">但<span data-hf-id="hf-9wyn" class="hl">价值本身不能最终由"对我有没有用"来决定</span>。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 12 倒转 ========== -->
-    <section data-hf-id="hf-daqi" id="s12" class="clip scene" data-start="245.44" data-duration="29.95" data-track-index="1">
-      <div data-hf-id="hf-jf7y" class="scene-inner">
-        <div data-hf-id="hf-6236" class="scene-head">
-          <div data-hf-id="hf-t7oh" class="scene-tag">倒转</div>
-          <div data-hf-id="hf-fdqq" class="scene-index"><b data-hf-id="hf-j5vu">12</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-4zuv" class="scene-title">价值的最终解释项，被替换了</h2>
-        <div data-hf-id="hf-kozx" class="rule"></div>
-        <div data-hf-id="hf-ajmo" class="scene-body">
-          <div data-hf-id="hf-vt1w" class="pair">
-            <div data-hf-id="hf-yc45" class="pair-box ar">
-              <div data-hf-id="hf-vnt6" class="pair-label">原本</div>
-              <div data-hf-id="hf-0wk0" class="pair-text">价值决定一个人<b data-hf-id="hf-67g5">应该怎样使用自己的能力</b>。</div>
-            </div>
-            <div data-hf-id="hf-63q7" class="pair-box b ar">
-              <div data-hf-id="hf-3mll" class="pair-label">现在</div>
-              <div data-hf-id="hf-6mwm" class="pair-text">能力与利益计算决定<b data-hf-id="hf-pjfi">某个价值是否值得保留</b>。</div>
-            </div>
-          </div>
-          <p data-hf-id="hf-mbv4" class="note ar">正直因"能维持稳定人格"而值得；善良因"能控制伤害"而值得；诚实因"能提高认知质量"而值得；勇敢因"能承担计算过的风险"而值得。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 13 精英认知外衣 ========== -->
-    <section data-hf-id="hf-4g4l" id="s13" class="clip scene" data-start="275.39" data-duration="41.79" data-track-index="1">
-      <div data-hf-id="hf-jtiz" class="scene-inner">
-        <div data-hf-id="hf-6ge7" class="scene-head">
-          <div data-hf-id="hf-0par" class="scene-tag">结论 · 一</div>
-          <div data-hf-id="hf-fs1r" class="scene-index"><b data-hf-id="hf-irkt">13</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-b3le" class="scene-title">一套很明显的"精英认知外衣"</h2>
-        <div data-hf-id="hf-lvx0" class="rule"></div>
-        <div data-hf-id="hf-9cpl" class="scene-body">
-          <p data-hf-id="hf-lill" class="lead ar">它保留了大量高位的道德词汇与传统价值的名称，<span data-hf-id="hf-6wmq" class="hl">却不断把它们拆解成人格功能与现实技巧</span>。</p>
-          <div data-hf-id="hf-mhiz" class="sac">
-            <div data-hf-id="hf-jaxt" class="sac-row ar"><span data-hf-id="hf-65qj">留下的核心问题越来越接近——</span></div>
-            <div data-hf-id="hf-wpx1" class="sac-row ar"><span data-hf-id="hf-318q" class="t">一个人怎样才能更清醒、更稳定、更强、更不容易被利用。</span></div>
-          </div>
-          <p data-hf-id="hf-6kxq" class="note ar">这可以构成一套人格论，也可以构成一套现实主义的生存哲学；唯独它<span data-hf-id="hf-m8lb" class="hl">很难再承担传统意义上的道德哲学</span>。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 14 停止利益计算 ========== -->
-    <section data-hf-id="hf-y40k" id="s14" class="clip scene" data-start="317.18" data-duration="38.34" data-track-index="1">
-      <div data-hf-id="hf-k7u0" class="scene-inner">
-        <div data-hf-id="hf-6up8" class="scene-head">
-          <div data-hf-id="hf-eut3" class="scene-tag">结论 · 二</div>
-          <div data-hf-id="hf-g6cs" class="scene-index"><b data-hf-id="hf-ljq0">14</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-z3p9" class="scene-title">道德哲学必须有一个地方，停止利益计算</h2>
-        <div data-hf-id="hf-lhlz" class="rule"></div>
-        <div data-hf-id="hf-9r0m" class="scene-body">
-          <p data-hf-id="hf-tf65" class="lead ar">否则，"不能卖的东西"也只能因为它有用才不能卖。</p>
-          <div data-hf-id="hf-kmwr" class="sac">
-            <div data-hf-id="hf-xwu4" class="sac-row ar"><span data-hf-id="hf-qc3g">所谓底线，就变成<span data-hf-id="hf-rtvi" class="t">策略</span>；</span></div>
-            <div data-hf-id="hf-xij3" class="sac-row ar"><span data-hf-id="hf-syzd">所谓正直，就变成<span data-hf-id="hf-hiwu" class="t">人格管理</span>；</span></div>
-            <div data-hf-id="hf-ypg6" class="sac-row ar"><span data-hf-id="hf-wh8b">所谓善良，就变成<span data-hf-id="hf-gjhn" class="t">伤害控制</span>；</span></div>
-            <div data-hf-id="hf-yb55" class="sac-row ar"><span data-hf-id="hf-0w3b">所谓诚实，就变成<span data-hf-id="hf-hwt9" class="t">认知技术</span>。</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 15 顺序倒置 ========== -->
-    <section data-hf-id="hf-hbzs" id="s15" class="clip scene" data-start="355.52" data-duration="24.64" data-track-index="1">
-      <div data-hf-id="hf-hfot" class="scene-inner">
-        <div data-hf-id="hf-7909" class="scene-head">
-          <div data-hf-id="hf-xx5k" class="scene-tag">结论 · 三</div>
-          <div data-hf-id="hf-gknt" class="scene-index"><b data-hf-id="hf-l5ez">15</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-svlq" class="scene-title">"什么值得"必须先于"怎样实现"</h2>
-        <div data-hf-id="hf-moj2" class="rule"></div>
-        <div data-hf-id="hf-8k3j" class="scene-body">
-          <div data-hf-id="hf-0ihs" class="panels">
-            <div data-hf-id="hf-vi51" class="panel a ar">
-              <div data-hf-id="hf-d9yn" class="panel-label">孔子</div>
-              <div data-hf-id="hf-ojqq" class="panel-text">仁先成立，智再帮助人认识仁、实践仁。</div>
-            </div>
-            <div data-hf-id="hf-3gqs" class="panel b ar">
-              <div data-hf-id="hf-egk6" class="panel-label">这里</div>
-              <div data-hf-id="hf-cbxi" class="panel-text">顺序倒置：价值越来越需要靠<b data-hf-id="hf-juq5">智</b>来证明现实价值，而智背后的尺度越来越接近<b data-hf-id="hf-zkyv">个人生存与利益</b>。</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 16 收束 ========== -->
-    <section data-hf-id="hf-xig5" id="s16" class="clip scene" data-start="380.16" data-duration="35.840" data-track-index="1">
-      <div data-hf-id="hf-htzu" class="scene-inner">
-        <div data-hf-id="hf-7nba" class="scene-head">
-          <div data-hf-id="hf-mvdm" class="scene-tag">结论</div>
-          <div data-hf-id="hf-gyyu" class="scene-index"><b data-hf-id="hf-kr3y">16</b> / 16</div>
-        </div>
-        <h2 data-hf-id="hf-8o35" class="scene-title">价值，还是工具？</h2>
-        <div data-hf-id="hf-ma81" class="rule"></div>
-        <div data-hf-id="hf-8yek" class="scene-body">
-          <p data-hf-id="hf-s3am" class="lead ar">他很好地解释了价值<span data-hf-id="hf-nqds" class="hl">有什么用</span>，却把价值<span data-hf-id="hf-95dk" class="hl">为什么值得</span>交给了个人利己的操作逻辑。</p>
-          <p data-hf-id="hf-e8qk" class="final ar">这就是元命题的缺位，也是对元命题的僭越。</p>
-          <p data-hf-id="hf-24es" class="note ar">真正处在元命题位置上的价值，必须能够在某些情况下要求个人放弃利益、效率、安全甚至生存；倘若它只有在对个人有利的时候才成立，它就已经从<span data-hf-id="hf-k47h" class="hl">价值降格成了工具</span>。</p>
-        </div>
-      </div>
-    </section>
 
   </div>
 
   <script>
     window.__timelines = window.__timelines || {};
-gsap.set("[data-hf-id=\"hf-4sg8\"]", { rotation: -19 });
     var tl = gsap.timeline({ paused: true });
 
-    /* ---- 背景环境动画 ---- */
-    tl.to(".bg-wash1", { scale: 1.14, duration: 7,  ease: "sine.inOut", yoyo: true, repeat: 29 }, 0);
-        /* 标题是水平居中的，所以环境位移只能走纵向 —— 横向漂移会把居中的字推偏 */
-    tl.to(".bg-title", { y: -30, duration: 36, ease: "sine.inOut", yoyo: true, repeat: 4 }, 0);
-    tl.fromTo(".bg-foot", { opacity: 0 }, { opacity: 1, duration: 0.9, ease: "power2.out" }, 0.3);
-
-    /* ---- 场景 ---- */
-    var SCENES = [
-      { id: "s1",  start: 0.000,   end: 11.636  },
-      { id: "s2",  start: 11.636,  end: 22.211  },
-      { id: "s3",  start: 22.211,  end: 49.856  },
-      { id: "s4",  start: 49.856,  end: 67.560  },
-      { id: "s5",  start: 67.560,  end: 81.089  },
-      { id: "s6",  start: 81.089,  end: 108.215 },
-      { id: "s7",  start: 108.215, end: 145.840 },
-      { id: "s8",  start: 145.840, end: 171.560 },
-      { id: "s9",  start: 171.560, end: 206.930 },
-      { id: "s10", start: 206.930, end: 227.427 },
-      { id: "s11", start: 227.427, end: 245.440 },
-      { id: "s12", start: 245.440, end: 275.391 },
-      { id: "s13", start: 275.391, end: 317.179 },
-      { id: "s14", start: 317.179, end: 355.520 },
-      { id: "s15", start: 355.520, end: 380.160 },
-      { id: "s16", start: 380.160, end: 416.000 }
-    ];
-
-    SCENES.forEach(function (s) {
-      var sel = "#" + s.id + " ";
-      var t = s.start;
-      tl.fromTo(sel + ".scene-tag",   { opacity: 0, x: -26 }, { opacity: 1, x: 0, duration: 0.42, ease: "power3.out", overwrite: "auto" }, t + 0.10);
-      tl.fromTo(sel + ".scene-index", { opacity: 0, x: 26 },  { opacity: 1, x: 0, duration: 0.42, ease: "power3.out", overwrite: "auto" }, t + 0.10);
-      tl.fromTo(sel + ".scene-title", { opacity: 0, y: 42 },  { opacity: 1, y: 0, duration: 0.58, ease: "power3.out", overwrite: "auto" }, t + 0.20);
-      tl.fromTo(sel + ".rule",        { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 0.52, ease: "power2.out", overwrite: "auto" }, t + 0.40);
-      tl.fromTo(sel + ".scene-body .ar", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.13, overwrite: "auto" }, t + 0.58);
-      tl.to(sel + ".scene-inner", { opacity: 0, duration: 0.4, ease: "power2.in", overwrite: "auto" }, s.end - 0.44);
-      tl.set(sel + ".scene-inner", { opacity: 0 }, s.end);
-tl.to(".bg-wash2", { scale: 1.18, duration: 9, ease: "sine.inOut", yoyo: true, repeat: 22 }, 0);
-tl.to(".bg-wash2", { keyframes: { "0%": { x: 0, y: 0 }, "9.3%": { x: 40 }, "100%": { x: 850, y: -700 } }, duration: 96.633 }, 0);
-    });
+    /* ---- 背景动画：目前没有 ----
+       已移除：径向光晕 .bg-wash1/2（元素连同动画一起删）、标题的 ±30px 纵向漂移、
+       页脚淡入 .bg-foot（元素已删）。
+       背景现在是完全静止的：照片 + 网格 + 标题 + 角标。
+       时间轴仍然注册（框架要求 window.__timelines 里有对应条目），只是没有子项。 */
 
     window.__timelines["main"] = tl;
 
@@ -605,12 +232,14 @@ tl.to(".bg-wash2", { keyframes: { "0%": { x: 0, y: 0 }, "9.3%": { x: 40 }, "100%
       var title = document.querySelector(".bg-title");
       if (!title) return;
       var BASE = 340;              // 基准字号：放得下就用它
-      var SIDE_GAP = 40;           // 在 --gutter 之外再留的余量，让居中的标题不贴边
+      var SIDE_GAP = 40;           // 在安全线之外再留的余量，让居中的标题不贴边
       function fit() {
         var root = document.getElementById("root") || document.documentElement;
-        // 可用宽度 = 画幅 − 左右各一条（--gutter + 余量）
-        var g = parseInt(getComputedStyle(root).getPropertyValue("--gutter"), 10) || 0;
-        var maxW = (root.clientWidth || 1080) - (g + SIDE_GAP) * 2;
+        // 可用宽度 = 画幅 − 左边距 − 右边距 − 两侧余量（左右不对称，与平台安全区一致）
+        var cs = getComputedStyle(root);
+        var g = parseInt(cs.getPropertyValue("--gutter"), 10) || 0;
+        var gr = parseInt(cs.getPropertyValue("--gutter-right"), 10) || g;
+        var maxW = (root.clientWidth || 1080) - g - gr - SIDE_GAP * 2;
         title.style.fontSize = BASE + "px";
         var w = title.getBoundingClientRect().width;
         if (w > maxW) title.style.fontSize = Math.floor((BASE * maxW) / w) + "px";
